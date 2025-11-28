@@ -75,7 +75,7 @@ const app = createApp(App);
 
 // Global directives
 app.directive('focus', {
-  inserted(el) {
+  mounted(el) {
     el.focus();
     const { value } = el;
     if (value && el.setSelectionRange) {
@@ -89,10 +89,10 @@ const setElTitle = (el, title) => {
   el.setAttribute('aria-label', title);
 };
 app.directive('title', {
-  bind(el, { value }) {
+  mounted(el, { value }) {
     setElTitle(el, value);
   },
-  update(el, { value, oldValue }) {
+  updated(el, { value, oldValue }) {
     if (value !== oldValue) {
       setElTitle(el, value);
     }
