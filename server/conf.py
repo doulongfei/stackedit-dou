@@ -1,8 +1,19 @@
 import os
+import sys
 from dotenv import load_dotenv
 
 env = os.getenv('STACKEDIT_ENV', 'dev')
-load_dotenv(f'server/.env.{env}')
+
+if getattr(sys, 'frozen', False):
+    # PyInstaller environment
+    base_path = sys._MEIPASS
+    # Try loading from bundled server directory
+    load_dotenv(os.path.join(base_path, 'server', f'.env.{env}'))
+    # Also try loading from executable directory (for user overrides)
+    load_dotenv(os.path.join(os.path.dirname(sys.executable), '.env'))
+else:
+    # Development environment
+    load_dotenv(f'server/.env.{env}')
 
 class Config:
     # 类变量，用于存储环境变量的值

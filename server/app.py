@@ -10,8 +10,16 @@ Compress(app)
 from conf import Config
 config = Config()
 
+import sys
+
 # 配置静态文件路径
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if getattr(sys, 'frozen', False):
+    # 如果是 PyInstaller 打包后的环境
+    BASE_DIR = sys._MEIPASS
+else:
+    # 开发环境
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 DIST_DIR = os.path.join(BASE_DIR, 'dist')
 
