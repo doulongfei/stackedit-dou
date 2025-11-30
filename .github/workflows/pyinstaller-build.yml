@@ -82,8 +82,8 @@ jobs:
         with:
           python-version: '3.11'
 
-        - name: Build (native x86_64)
-          if: matrix.arch == 'linux-x86_64'
+      - name: Build (native x86_64)
+        if: matrix.arch == 'linux-x86_64'
         env:
           BINARY_NAME: ${{ github.event.inputs.binary_name }}
         run: |
