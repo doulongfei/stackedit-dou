@@ -1,0 +1,90 @@
+name: Build, Package and Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: 'release type: patch, minor or major'
+        required: false
+        default: 'patch'
+
+permissions:
+  contents: write
+
+jobs:
+  build_and_release:
+    name: Build, package and create Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # we need full history for tags
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (frontend)
+        run: npm run build
+
+      - name: Verify build output
+        run: |
+          if [ ! -d dist ]; then echo "dist directory not found" && exit 1; fi
+          ls -la dist | sed -n '1,120p'
+
+      - name: Package artifacts
+        id: package
+        run: |
+          TIMESTAMP=$(date -u +%Y%m%dT%H%M%SZ)
+          VERSION_FILE=package.json
+          VERSION=$(node -e "console.log(require('./package.json').version)")
+          ARCHIVE_NAME=stackedit-dist-server-${VERSION}-${TIMESTAMP}.zip
+          # include dist and server dir (if present) plus package.json for traceability
+          zip -r ${ARCHIVE_NAME} dist server package.json README.md || true
+          echo "archive=${ARCHIVE_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Configure git for tag commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump project version, commit and create tag
+        id: bump
+        run: |
+          TYPE="${{ github.event.inputs.release_type }}"
+          echo "Bumping version: $TYPE"
+          # Use npm to increment version and create tag/commit
+          npm version $TYPE -m "chore(release): %s [skip ci]"
+          # Get created tag
+          TAG=$(git describe --tags --abbrev=0)
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+
+      - name: Push changes and tags
+        run: |
+          # push commit and tags back to origin (push to master branch)
+          git push origin HEAD:refs/heads/master
+          git push --tags
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ steps.bump.outputs.tag }}
+          release_name: Release ${{ steps.bump.outputs.tag }}
+          body: "Automated release produced by workflow: build + package + release."
+          draft: false
+          prerelease: false
+
+      - name: Upload build artifact to release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.package.outputs.archive }}
+          asset_name: ${{ steps.bump.outputs.tag }}-dist.zip
+          asset_content_type: application/zip
