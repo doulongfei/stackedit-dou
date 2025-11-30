@@ -84,8 +84,12 @@ jobs:
       - name: Build (native x86_64)
         if: matrix.platform == 'native'
         env:
-          BINARY_NAME: ${{ github.event.inputs.binary_name || 'stackedit-server' }}
+          BINARY_NAME: ${{ github.event.inputs.binary_name }}
         run: |
+          set -x
+          BINARY_NAME=${BINARY_NAME:-stackedit-server}
+          echo "Building binary as: $BINARY_NAME"
+          uname -a || true
           ./scripts/pyinstaller_build.sh --name "$BINARY_NAME" --skip-front --arch ${{ matrix.arch }}
 
       - name: Register QEMU for emulation
@@ -101,8 +105,11 @@ jobs:
         env:
           BINARY_NAME: ${{ github.event.inputs.binary_name || 'stackedit-server' }}
         run: |
+          set -x
+          docker version || true
+          echo "Running arm64 container build"
           # run build inside an arm64 node image (emulated via QEMU)
-          docker run --rm --platform linux/arm64 -v $PWD:/work -w /work node:18-bullseye /bin/bash -lc "set -euo pipefail; apt-get update && apt-get install -y python3 python3-venv python3-pip build-essential zip unzip && ./scripts/pyinstaller_build.sh --name \"$BINARY_NAME\" --skip-front --arch ${{ matrix.arch }}"
+          docker run --rm --platform linux/arm64 -v $PWD:/work -w /work node:18-bullseye /bin/bash -lc "set -euo pipefail; apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y python3 python3-venv python3-pip build-essential zip unzip && ./scripts/pyinstaller_build.sh --name \"$BINARY_NAME\" --skip-front --arch ${{ matrix.arch }}"
 
       - name: List produced files
         run: ls -la *${{ matrix.arch }}*.tar.gz || true
@@ -157,5 +164,44 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: stackedit-server-*.linux-arm64.tar.gz
+          
+  smoke_test:
+    name: Smoke test x86 binary (tag only)
+    runs-on: ubuntu-latest
+    needs: attach_release_assets
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download x86 artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: pyinstaller-bundle-linux-x86_64
+
+      - name: Extract and run binary
+        run: |
+          set -x
+          WORKDIR=$(mktemp -d)
+          tar -xzf stackedit-server-*.linux-x86_64.tar.gz -C "$WORKDIR"
+          BIN=$(find "$WORKDIR" -type f -perm -111 -maxdepth 2 -print -quit)
+          echo "Found binary: $BIN"
+          chmod +x "$BIN"
+          # start in background on port 8090 to avoid collisions
+          LISTENING_PORT=8090 "$BIN" &
+          PID=$!
+          echo "Started $PID"
+          sleep 3
+          # try health check
+          for i in 1 2 3 4 5; do
+            if curl -sS --fail http://127.0.0.1:8090/app >/dev/null 2>&1; then echo "OK"; exit 0; fi
+            echo "waiting for app... ($i)"; sleep 2
+          done
+          echo "Failed to get health response"; kill $PID || true; exit 1
+        
+      - name: Stop smoke server
+        if: success() || failure()
+        run: |
+          pkill -f stackedit-server || true
           asset_name: stackedit-server-${{ github.ref_name }}-linux-arm64.tar.gz
           asset_content_type: application/gzip
