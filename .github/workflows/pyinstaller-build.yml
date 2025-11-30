@@ -107,9 +107,9 @@ jobs:
         run: |
           set -x
           docker version || true
-          echo "Running arm64 container build"
-          # run build inside an arm64 node image (emulated via QEMU)
-          docker run --rm --platform linux/arm64 -v $PWD:/work -w /work node:18-bullseye /bin/bash -lc "set -euo pipefail; apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y python3 python3-venv python3-pip build-essential zip unzip && ./scripts/pyinstaller_build.sh --name \"$BINARY_NAME\" --skip-front --arch ${{ matrix.arch }}"
+          echo "Running arm64 container build (python base image)"
+          # run build inside an arm64 python image (emulated via QEMU)
+          docker run --rm --platform linux/arm64 -v $PWD:/work -w /work python:3.11-slim /bin/bash -lc "set -euo pipefail; apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential zip unzip && python3 -m pip install --upgrade pip && ./scripts/pyinstaller_build.sh --name \"$BINARY_NAME\" --skip-front --arch ${{ matrix.arch }}"
 
       - name: List produced files
         run: ls -la *${{ matrix.arch }}*.tar.gz || true
