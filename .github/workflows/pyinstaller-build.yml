@@ -121,7 +121,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: pyinstaller-bundle-${{ matrix.arch }}
-          path: *${{ matrix.arch }}*.tar.gz
+          path: "*${{ matrix.arch }}*.tar.gz"
 
       # final release attachment will be handled by a separate job
 
