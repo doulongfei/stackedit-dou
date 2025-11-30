@@ -71,7 +71,12 @@ else
 fi
 
 TIMESTAMP=$(date -u +%Y%m%dT%H%M%SZ)
-VERSION=$(node -p "require('./package.json').version")
+# try node first, fall back to python if node isn't available
+if command -v node >/dev/null 2>&1; then
+  VERSION=$(node -p "require('./package.json').version")
+else
+  VERSION=$(python3 -c "import json,sys; print(json.load(open('package.json'))['version'])")
+fi
 ARCHIVE="${NAME}-${VERSION}-${TIMESTAMP}-${ARCH}.tar.gz"
 tar -C "$OUT_DIR" -czf "$ARCHIVE" .
 
