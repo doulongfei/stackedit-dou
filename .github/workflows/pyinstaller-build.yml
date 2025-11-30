@@ -77,13 +77,13 @@ jobs:
         run: chmod +x scripts/pyinstaller_build.sh scripts/install_binary.sh || true
 
       - name: Setup Python for host build
-        if: matrix.platform == 'native'
+        if: matrix.arch == 'linux-x86_64'
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
-      - name: Build (native x86_64)
-        if: matrix.platform == 'native'
+        - name: Build (native x86_64)
+          if: matrix.arch == 'linux-x86_64'
         env:
           BINARY_NAME: ${{ github.event.inputs.binary_name }}
         run: |
@@ -94,15 +94,15 @@ jobs:
           ./scripts/pyinstaller_build.sh --name "$BINARY_NAME" --skip-front --arch ${{ matrix.arch }}
 
       - name: Register QEMU for emulation
-        if: matrix.platform == 'qemu'
+        if: matrix.arch == 'linux-arm64'
         uses: docker/setup-qemu-action@v2
 
       - name: Setup buildx for multi-platform container execution
-        if: matrix.platform == 'qemu'
+        if: matrix.arch == 'linux-arm64'
         uses: docker/setup-buildx-action@v2
 
       - name: Build in arm64 container
-        if: matrix.platform == 'qemu'
+        if: matrix.arch == 'linux-arm64'
         env:
           BINARY_NAME: ${{ github.event.inputs.binary_name || 'stackedit-server' }}
         run: |
