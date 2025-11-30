@@ -108,8 +108,10 @@ jobs:
           set -x
           docker version || true
           echo "Running arm64 container build (python base image)"
-          # run build inside an arm64 python image (emulated via QEMU)
-          docker run --rm --platform linux/arm64 -v $PWD:/work -w /work python:3.11-slim /bin/bash -lc "set -euo pipefail; apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential zip unzip && python3 -m pip install --upgrade pip && ./scripts/pyinstaller_build.sh --name \"$BINARY_NAME\" --skip-front --arch ${{ matrix.arch }}"
+          # Build a lightweight builder image for the target platform and load it
+          docker buildx build --platform ${{ matrix.platform }} -f .github/ci/pyinstaller-builder.Dockerfile -t pyinstaller-builder:${{ matrix.arch }} --load .
+          # run build inside that builder image (the repo is mounted into /work)
+          docker run --rm --platform ${{ matrix.platform }} -v $PWD:/work -w /work pyinstaller-builder:${{ matrix.arch }} /bin/bash -lc "set -euo pipefail; python3 -m pip install -r server/requirements.txt && ./scripts/pyinstaller_build.sh --name \"$BINARY_NAME\" --skip-front --arch ${{ matrix.arch }}"
 
       - name: List produced files
         run: ls -la *${{ matrix.arch }}*.tar.gz || true
