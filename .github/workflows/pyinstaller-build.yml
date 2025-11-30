@@ -51,10 +51,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - arch: linux-x86_64
-            platform: native
-          - arch: linux-arm64
-            platform: qemu
+              - arch: linux-x86_64
+                platform: linux/amd64
+              # arm64 build is temporarily disabled (unstable on hosted runner)
+              # - arch: linux-arm64
+              #   platform: linux/arm64
 
     steps:
       - name: Checkout
