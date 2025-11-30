@@ -18,8 +18,7 @@ jobs:
   build_frontend:
     name: Build frontend artifact
     runs-on: ubuntu-latest
-    outputs:
-      dist_artifact: dist-archive
+    # no job outputs required; artifact used for cross-job transfer
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -92,6 +91,10 @@ jobs:
       - name: Register QEMU for emulation
         if: matrix.platform == 'qemu'
         uses: docker/setup-qemu-action@v2
+
+      - name: Setup buildx for multi-platform container execution
+        if: matrix.platform == 'qemu'
+        uses: docker/setup-buildx-action@v2
 
       - name: Build in arm64 container
         if: matrix.platform == 'qemu'
