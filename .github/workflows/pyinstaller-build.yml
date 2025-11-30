@@ -51,9 +51,7 @@ jobs:
         include:
               - arch: linux-x86_64
                 platform: linux/amd64
-              # arm64 build is temporarily disabled (unstable on hosted runner)
-              # - arch: linux-arm64
-              #   platform: linux/arm64
+              # (arm64 builds are disabled for now)
 
     steps:
       - name: Checkout
@@ -86,26 +84,7 @@ jobs:
           uname -a || true
           ./scripts/pyinstaller_build.sh --name "$BINARY_NAME" --skip-front --arch ${{ matrix.arch }}
 
-      - name: Register QEMU for emulation
-        if: matrix.arch == 'linux-arm64'
-        uses: docker/setup-qemu-action@v2
-
-      - name: Setup buildx for multi-platform container execution
-        if: matrix.arch == 'linux-arm64'
-        uses: docker/setup-buildx-action@v2
-
-      - name: Build in arm64 container
-        if: matrix.arch == 'linux-arm64'
-        env:
-          BINARY_NAME: ${{ github.event.inputs.binary_name || 'stackedit-server' }}
-        run: |
-          set -x
-          docker version || true
-          echo "Running arm64 container build (python base image)"
-          # Build a lightweight builder image for the target platform and load it
-          docker buildx build --platform ${{ matrix.platform }} -f .github/ci/pyinstaller-builder.Dockerfile -t pyinstaller-builder:${{ matrix.arch }} --load .
-          # run build inside that builder image (the repo is mounted into /work)
-          docker run --rm --platform ${{ matrix.platform }} -v $PWD:/work -w /work pyinstaller-builder:${{ matrix.arch }} /bin/bash -lc "set -euo pipefail; python3 -m pip install -r server/requirements.txt && ./scripts/pyinstaller_build.sh --name \"$BINARY_NAME\" --skip-front --arch ${{ matrix.arch }}"
+      # arm64/container-based build removed temporarily
 
       - name: List produced files
         run: ls -la *${{ matrix.arch }}*.tar.gz || true
@@ -132,20 +111,7 @@ jobs:
         with:
           name: pyinstaller-bundle-linux-x86_64
 
-      - name: Download arm64 artifact
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: pyinstaller-bundle-linux-arm64
-
-      - name: Check for arm64 artifact file
-        id: check_arm64
-        run: |
-          if ls stackedit-server-*.linux-arm64.tar.gz >/dev/null 2>&1; then
-            echo "found=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "found=false" >> "$GITHUB_OUTPUT"
-          fi
+      # arm64 download/upload steps removed — we only handle x86_64 artifacts for now
 
       - name: Create Release
         id: create_release
@@ -165,14 +131,7 @@ jobs:
           asset_name: stackedit-server-${{ github.ref_name }}-linux-x86_64.tar.gz
           asset_content_type: application/gzip
 
-      - name: Upload arm64 asset
-        if: steps.check_arm64.outputs.found == 'true'
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: stackedit-server-*.linux-arm64.tar.gz
-          asset_name: stackedit-server-${{ github.ref_name }}-linux-arm64.tar.gz
-          asset_content_type: application/gzip
+      # arm64 upload removed
           
   smoke_test:
     name: Smoke test x86 binary (tag only)
