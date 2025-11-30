@@ -43,6 +43,18 @@ sudo systemctl status stackedit
 sudo journalctl -u stackedit -f
 ```
 
+## One-line installer (curl | bash)
+
+You can let users install the latest packaged binary with one command (no version selection):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/doulongfei/stackedit-dou/master/scripts/install_latest.sh | sudo bash
+```
+
+This script will download the latest release asset that matches `stackedit-server-*` and install it as a systemd service (`/etc/systemd/system/stackedit.service`) under `/opt/stackedit`.
+
+CAUTION: This method runs code from the internet — only use it for trusted sources.
+
 ## 常见问题与限制
 - PyInstaller 二进制与构建平台绑定：必须在与目标相同架构和兼容 libc 的 Linux 环境中构建（在 x86_64 Linux 上构建用于 x86_64 Linux）。建议使用相同发行版或官方 manylinux 基础镜像进行构建。
 - 需要确保系统上安装了 `pandoc`、`wkhtmltopdf` 等 externals，或修改代码跳过或替换这些功能。

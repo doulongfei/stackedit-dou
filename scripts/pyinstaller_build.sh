@@ -2,26 +2,34 @@
 set -euo pipefail
 
 # Build a single-file PyInstaller binary for the Flask server (Linux target)
-# Usage: ./scripts/pyinstaller_build.sh [--onefile] [--name stackedit-server]
+# Usage: ./scripts/pyinstaller_build.sh [--onefile] [--name stackedit-server] [--skip-front] [--arch <arch>]
 
 ROOT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 cd "$ROOT_DIR"
 
 NAME="stackedit-server"
 ONEFILE=true
+SKIP_FRONT=false
+ARCH=linux-x86_64
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --name) NAME="$2"; shift 2;;
     --no-onefile) ONEFILE=false; shift;;
+    --skip-front|--no-front) SKIP_FRONT=true; shift;;
+    --arch) ARCH="$2"; shift 2;;
     -h|--help) echo "Usage: $0 [--name <binary-name>] [--no-onefile]"; exit 0;;
     *) echo "Unknown option $1"; exit 1;;
   esac
 done
 
-echo "Building frontend (vite) ..."
-npm ci
-npm run build
+if [ "$SKIP_FRONT" = false ]; then
+  echo "Building frontend (vite) ..."
+  npm ci
+  npm run build
+else
+  echo "Skipping frontend build (dist should exist)"
+fi
 
 BUILD_DIR=.pyinstaller_build
 rm -rf "$BUILD_DIR"
@@ -64,7 +72,7 @@ fi
 
 TIMESTAMP=$(date -u +%Y%m%dT%H%M%SZ)
 VERSION=$(node -p "require('./package.json').version")
-ARCHIVE="${NAME}-${VERSION}-${TIMESTAMP}-linux-x86_64.tar.gz"
+ARCHIVE="${NAME}-${VERSION}-${TIMESTAMP}-${ARCH}.tar.gz"
 tar -C "$OUT_DIR" -czf "$ARCHIVE" .
 
 echo "PyInstaller bundle created: $ARCHIVE"
