@@ -1,0 +1,99 @@
+npm WARN using --force Recommended protections disabled.
+npm WARN deprecated @npmcli/move-file@1.1.2: This functionality has been moved to @npmcli/fs
+npm WARN deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+npm WARN deprecated stylelint-processor-html@1.0.0: Please use stylelint-processor-arbitrary-tags https://github.com/mapbox/stylelint-processor-arbitrary-tags 
+npm WARN deprecated source-map-url@0.4.1: See https://github.com/lydell/source-map-url#deprecated
+npm WARN deprecated @npmcli/move-file@2.0.1: This functionality has been moved to @npmcli/fs
+npm WARN deprecated npmlog@5.0.1: This package is no longer supported.
+npm WARN deprecated npmlog@6.0.2: This package is no longer supported.
+npm WARN deprecated urix@0.1.0: Please see https://github.com/lydell/urix#deprecated
+npm WARN deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+npm WARN deprecated resolve-url@0.2.1: https://github.com/lydell/resolve-url#deprecated
+npm WARN deprecated are-we-there-yet@2.0.0: This package is no longer supported.
+npm WARN deprecated are-we-there-yet@3.0.1: This package is no longer supported.
+npm WARN deprecated glob@8.1.0: Glob versions prior to v9 are no longer supported
+npm WARN deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+npm WARN deprecated source-map-resolve@0.5.3: See https://github.com/lydell/source-map-resolve#deprecated
+npm WARN deprecated glob@7.1.7: Glob versions prior to v9 are no longer supported
+npm WARN deprecated sourcemap-codec@1.4.8: Please use @jridgewell/sourcemap-codec instead
+npm WARN deprecated gauge@3.0.2: This package is no longer supported.
+npm WARN deprecated gauge@4.0.4: This package is no longer supported.
+npm WARN deprecated source-map@0.8.0-beta.0: The work that was done in this beta branch won't be included in future versions
+npm WARN deprecated node-sass@8.0.0: Node Sass is no longer supported. Please use `sass` or `sass-embedded` instead.
+npm ERR! code 1
+npm ERR! path /workspaces/stackedit-dou/node_modules/canvas
+npm ERR! command failed
+npm ERR! command sh -c node-pre-gyp install --fallback-to-build --update-binary
+npm ERR! Failed to execute '/usr/local/share/nvm/versions/node/v22.21.1/bin/node /usr/local/share/nvm/versions/node/v22.21.1/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js configure --fallback-to-build --update-binary --module=/workspaces/stackedit-dou/node_modules/canvas/build/Release/canvas.node --module_name=canvas --module_path=/workspaces/stackedit-dou/node_modules/canvas/build/Release --napi_version=10 --node_abi_napi=napi --napi_build_version=0 --node_napi_label=node-v127' (1)
+npm ERR! node-pre-gyp info it worked if it ends with ok
+npm ERR! node-pre-gyp info using node-pre-gyp@1.0.11
+npm ERR! node-pre-gyp info using node@22.21.1 | linux | x64
+npm ERR! node-pre-gyp http GET https://github.com/Automattic/node-canvas/releases/download/v2.11.2/canvas-v2.11.2-node-v127-linux-glibc-x64.tar.gz
+npm ERR! node-pre-gyp ERR! install response status 404 Not Found on https://github.com/Automattic/node-canvas/releases/download/v2.11.2/canvas-v2.11.2-node-v127-linux-glibc-x64.tar.gz 
+npm ERR! node-pre-gyp WARN Pre-built binaries not installable for canvas@2.11.2 and node@22.21.1 (node-v127 ABI, glibc) (falling back to source compile with node-gyp) 
+npm ERR! node-pre-gyp WARN Hit error response status 404 Not Found on https://github.com/Automattic/node-canvas/releases/download/v2.11.2/canvas-v2.11.2-node-v127-linux-glibc-x64.tar.gz 
+npm ERR! gyp info it worked if it ends with ok
+npm ERR! gyp info using node-gyp@9.4.0
+npm ERR! gyp info using node@22.21.1 | linux | x64
+npm ERR! gyp info ok 
+npm ERR! gyp info it worked if it ends with ok
+npm ERR! gyp info using node-gyp@9.4.0
+npm ERR! gyp info using node@22.21.1 | linux | x64
+npm ERR! (node:17369) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+npm ERR! (Use `node --trace-deprecation ...` to show where the warning was created)
+npm ERR! gyp info find Python using Python version 3.12.1 found at "/home/codespace/.python/current/bin/python3"
+npm ERR! gyp info spawn /home/codespace/.python/current/bin/python3
+npm ERR! gyp info spawn args [
+npm ERR! gyp info spawn args   '/usr/local/share/nvm/versions/node/v22.21.1/lib/node_modules/npm/node_modules/node-gyp/gyp/gyp_main.py',
+npm ERR! gyp info spawn args   'binding.gyp',
+npm ERR! gyp info spawn args   '-f',
+npm ERR! gyp info spawn args   'make',
+npm ERR! gyp info spawn args   '-I',
+npm ERR! gyp info spawn args   '/workspaces/stackedit-dou/node_modules/canvas/build/config.gypi',
+npm ERR! gyp info spawn args   '-I',
+npm ERR! gyp info spawn args   '/usr/local/share/nvm/versions/node/v22.21.1/lib/node_modules/npm/node_modules/node-gyp/addon.gypi',
+npm ERR! gyp info spawn args   '-I',
+npm ERR! gyp info spawn args   '/home/codespace/.cache/node-gyp/22.21.1/include/node/common.gypi',
+npm ERR! gyp info spawn args   '-Dlibrary=shared_library',
+npm ERR! gyp info spawn args   '-Dvisibility=default',
+npm ERR! gyp info spawn args   '-Dnode_root_dir=/home/codespace/.cache/node-gyp/22.21.1',
+npm ERR! gyp info spawn args   '-Dnode_gyp_dir=/usr/local/share/nvm/versions/node/v22.21.1/lib/node_modules/npm/node_modules/node-gyp',
+npm ERR! gyp info spawn args   '-Dnode_lib_file=/home/codespace/.cache/node-gyp/22.21.1/<(target_arch)/node.lib',
+npm ERR! gyp info spawn args   '-Dmodule_root_dir=/workspaces/stackedit-dou/node_modules/canvas',
+npm ERR! gyp info spawn args   '-Dnode_engine=v8',
+npm ERR! gyp info spawn args   '--depth=.',
+npm ERR! gyp info spawn args   '--no-parallel',
+npm ERR! gyp info spawn args   '--generator-output',
+npm ERR! gyp info spawn args   'build',
+npm ERR! gyp info spawn args   '-Goutput_dir=.'
+npm ERR! gyp info spawn args ]
+npm ERR! Package pixman-1 was not found in the pkg-config search path.
+npm ERR! Perhaps you should add the directory containing `pixman-1.pc'
+npm ERR! to the PKG_CONFIG_PATH environment variable
+npm ERR! Package 'pixman-1', required by 'virtual:world', not found
+npm ERR! gyp: Call to 'pkg-config pixman-1 --libs' returned exit status 1 while in binding.gyp. while trying to load binding.gyp
+npm ERR! gyp ERR! configure error 
+npm ERR! gyp ERR! stack Error: `gyp` failed with exit code: 1
+npm ERR! gyp ERR! stack     at ChildProcess.onCpExit (/usr/local/share/nvm/versions/node/v22.21.1/lib/node_modules/npm/node_modules/node-gyp/lib/configure.js:325:16)
+npm ERR! gyp ERR! stack     at ChildProcess.emit (node:events:519:28)
+npm ERR! gyp ERR! stack     at ChildProcess._handle.onexit (node:internal/child_process:293:12)
+npm ERR! gyp ERR! System Linux 6.8.0-1030-azure
+npm ERR! gyp ERR! command "/usr/local/share/nvm/versions/node/v22.21.1/bin/node" "/usr/local/share/nvm/versions/node/v22.21.1/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js" "configure" "--fallback-to-build" "--update-binary" "--module=/workspaces/stackedit-dou/node_modules/canvas/build/Release/canvas.node" "--module_name=canvas" "--module_path=/workspaces/stackedit-dou/node_modules/canvas/build/Release" "--napi_version=10" "--node_abi_napi=napi" "--napi_build_version=0" "--node_napi_label=node-v127"
+npm ERR! gyp ERR! cwd /workspaces/stackedit-dou/node_modules/canvas
+npm ERR! gyp ERR! node -v v22.21.1
+npm ERR! gyp ERR! node-gyp -v v9.4.0
+npm ERR! gyp ERR! not ok 
+npm ERR! node-pre-gyp ERR! build error 
+npm ERR! node-pre-gyp ERR! stack Error: Failed to execute '/usr/local/share/nvm/versions/node/v22.21.1/bin/node /usr/local/share/nvm/versions/node/v22.21.1/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js configure --fallback-to-build --update-binary --module=/workspaces/stackedit-dou/node_modules/canvas/build/Release/canvas.node --module_name=canvas --module_path=/workspaces/stackedit-dou/node_modules/canvas/build/Release --napi_version=10 --node_abi_napi=napi --napi_build_version=0 --node_napi_label=node-v127' (1)
+npm ERR! node-pre-gyp ERR! stack     at ChildProcess.<anonymous> (/workspaces/stackedit-dou/node_modules/@mapbox/node-pre-gyp/lib/util/compile.js:89:23)
+npm ERR! node-pre-gyp ERR! stack     at ChildProcess.emit (node:events:519:28)
+npm ERR! node-pre-gyp ERR! stack     at maybeClose (node:internal/child_process:1101:16)
+npm ERR! node-pre-gyp ERR! stack     at ChildProcess._handle.onexit (node:internal/child_process:304:5)
+npm ERR! node-pre-gyp ERR! System Linux 6.8.0-1030-azure
+npm ERR! node-pre-gyp ERR! command "/usr/local/share/nvm/versions/node/v22.21.1/bin/node" "/workspaces/stackedit-dou/node_modules/.bin/node-pre-gyp" "install" "--fallback-to-build" "--update-binary"
+npm ERR! node-pre-gyp ERR! cwd /workspaces/stackedit-dou/node_modules/canvas
+npm ERR! node-pre-gyp ERR! node -v v22.21.1
+npm ERR! node-pre-gyp ERR! node-pre-gyp -v v1.0.11
+npm ERR! node-pre-gyp ERR! not ok
+
+npm ERR! A complete log of this run can be found in: /home/codespace/.npm/_logs/2025-11-30T04_07_25_472Z-debug-0.log

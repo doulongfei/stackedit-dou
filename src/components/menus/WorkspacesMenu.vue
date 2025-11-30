@@ -123,7 +123,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../../styles/variables.scss';
+@use '../../styles/variables.scss' as *;
 
 .workspace .menu-entry {
   padding-top: 12px;

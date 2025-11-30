@@ -297,7 +297,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../../styles/variables.scss';
+@use '../../styles/variables.scss' as *;
 
 .line-entry {
   word-break: break-word; /* 文本行的任意字内断开，就算是一个单词也会分开 */

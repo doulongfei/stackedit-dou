@@ -1,6 +1,5 @@
 import { createApp } from 'vue';
 import 'indexeddbshim/dist/indexeddbshim';
-import { registerSW } from "virtual:pwa-register";
 import './extensions';
 import './services/optional';
 import icons from './icons';
@@ -13,59 +12,57 @@ if (!indexedDB) {
   throw new Error('不支持您的浏览器，请升级到最新版本。');
 }
 
-registerSW({
-  onRegistered: (registration) => {
-    if (registration) {
-      // 监听 fetch 事件，动态判断路径
-      registration.addEventListener('fetch', (event) => {
-        const url = new URL(event.request.url);
+// 注册 Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then((registration) => {
+        console.log('Service Worker 注册成功:', registration.scope);
 
-        // 如果路径不是 /app，直接跳过缓存
-        if (!url.pathname.startsWith('/app')) {
-          return;
-        }
-
-        // 否则，返回缓存的 /app 内容
-        event.respondWith(
-          caches.match(event.request).then((response) => {
-            return response || fetch(event.request);
-          })
-        );
+        // 检测更新
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing;
+          if (newWorker) {
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                // 有新版本可用
+                console.log('发现新版本，准备更新...');
+              }
+            });
+          }
+        });
+      })
+      .catch((error) => {
+        console.error('Service Worker 注册失败:', error);
       });
-      console.log('Service Worker 注册成功:', r);
-    }
-  },
-  onOfflineReady: () => {
-    // 离线就绪时的逻辑
-  },
-  onNeedRefresh: async () => {
-    if (!store.state.light) {
-      await localDbSvc.sync();
-      localStorage.updated = true;
-      console.log('需要刷新页面以更新 Service Worker');
-      window.location.reload();
-    }
-    console.log('需要刷新页面以更新 Service Worker');
-  },
-});
 
-if (localStorage.updated) {
-  store.dispatch('notification/info', 'StackEdit中文版刚刚更新了！');
-  setTimeout(() => localStorage.removeItem('updated'), 3000);
+    // 监听 SW 发来的更新消息
+    navigator.serviceWorker.addEventListener('message', async (event) => {
+      if (event.data?.type === 'SW_UPDATED') {
+        // 同步本地数据后刷新
+        if (!store.state.light) {
+          try {
+            await localDbSvc.sync();
+          } catch (e) {
+            console.error('同步失败:', e);
+          }
+        }
+        store.dispatch('notification/info', 'StackEdit中文版刚刚更新了！');
+      }
+    });
+  });
 }
 
+// PWA 安装提示
 if (!localStorage.installPrompted) {
   window.addEventListener('beforeinstallprompt', async (promptEvent) => {
-    // Prevent Chrome 67 and earlier from automatically showing the prompt
     promptEvent.preventDefault();
-
     try {
       await store.dispatch('notification/confirm', '将StackEdit中文版添加到您的主屏幕上？');
       promptEvent.prompt();
       await promptEvent.userChoice;
     } catch (err) {
-      console.log(err)
-      // Cancel
+      // 用户取消
     }
     localStorage.installPrompted = true;
   });

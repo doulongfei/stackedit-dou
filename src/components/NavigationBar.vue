@@ -252,7 +252,8 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../styles/variables.scss';
+@use "sass:color";
+@use '../styles/variables.scss' as *;
 
 .navigation-bar {
   position: absolute;
@@ -459,12 +460,12 @@ export default {
 }
 
 .navigation-bar__button--close {
-  color: lighten($link-color, 15%);
+  color: color.adjust($link-color, $lightness: 15%);
 
   &:active,
   &:focus,
   &:hover {
-    color: lighten($link-color, 25%);
+    color: color.adjust($link-color, $lightness: 25%);
   }
 }
 
@@ -492,7 +493,7 @@ $t: 3000ms;
   .icon {
     width: 24px;
     height: 24px;
-    color: transparentize($error-color, 0.5);
+    color: color.adjust($error-color, $alpha: -0.5);
   }
 }
 
@@ -501,7 +502,7 @@ $t: 3000ms;
   height: $d;
   display: block;
   position: relative;
-  border: $b solid transparentize($navbar-color, 0.5);
+  border: $b solid color.adjust($navbar-color, $alpha: -0.5);
   border-radius: 50%;
   margin: 2px;
 

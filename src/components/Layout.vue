@@ -156,7 +156,8 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../styles/variables.scss';
+@use "sass:color";
+@use '../styles/variables.scss' as *;
 
 .layout {
   position: absolute;
@@ -191,10 +192,10 @@ export default {
   .comment-list__current-discussion,
   .sticky-comment,
   .current-discussion {
-    background-color: mix(#000, $editor-background-light, 6.7%);
+    background-color: color.mix(#000, $editor-background-light, 6.7%);
 
     .app--dark & {
-      background-color: mix(#fff, $editor-background-dark, 6.7%);
+      background-color: color.mix(#fff, $editor-background-dark, 6.7%);
     }
   }
 }
@@ -216,7 +217,7 @@ $preview-background-dark: #444;
   .comment-list__current-discussion,
   .sticky-comment,
   .current-discussion {
-    background-color: mix(#000, $preview-background-light, 6.7%);
+    background-color: color.mix(#000, $preview-background-light, 6.7%);
   }
 }
 

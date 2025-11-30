@@ -192,7 +192,8 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../../styles/variables.scss';
+@use "sass:color";
+@use '../../styles/variables.scss' as *;
 
 .workspace-entry {
   margin: 1.75em 0;
@@ -279,6 +280,6 @@ $small-button-size: 22px;
   padding: 0.15em 0.35em;
   border-radius: 3px;
   color: #fff;
-  background-color: darken($error-color, 10);
+  background-color: color.adjust($error-color, $lightness: -10%);
 }
 </style>

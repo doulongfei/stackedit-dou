@@ -32,4 +32,12 @@ export default defineConfig({
       ext: '.gz',
     }),
   ],
+  css: {
+    preprocessorOptions: {
+      scss: {
+        javascriptEnabled: true,
+        quietDeps: true,
+      },
+    },
+  },
 });

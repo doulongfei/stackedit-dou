@@ -104,7 +104,7 @@ export default modalTemplate({
 </script>
 
 <style lang="scss">
-@import '../../styles/variables.scss';
+@use '../../styles/variables.scss' as *;
 
 .modal__inner-1.modal__inner-1--chatgpt {
   max-width: 560px;

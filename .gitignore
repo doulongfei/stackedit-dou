@@ -20,3 +20,4 @@ chrome-app/*.zip
 *.sln
 *.sw?
 */__pycache__/
+server/.venv/

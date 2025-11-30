@@ -1,0 +1,23 @@
+{
+  "name": "StackEdit中文版",
+  "short_name": "StackEdit",
+  "description": "笔记利器，在线Markdown编辑器",
+  "start_url": "/app",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#ffffff",
+  "theme_color": "#2196f3",
+  "icons": [
+    {
+      "src": "/static/landing/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/static/landing/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

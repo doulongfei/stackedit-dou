@@ -1,5 +1,5 @@
-@import '../../node_modules/normalize-scss/sass/normalize';
-@import './variables';
+@use './normalize-scss/normalize' as *;
+@use './variables' as *;
 
 @include normalize();
 

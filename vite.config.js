@@ -1,11 +1,9 @@
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
-import { VitePWA } from "vite-plugin-pwa";
 import viteCompression from 'vite-plugin-compression';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { resolve } from 'path';
 import { createHash } from 'crypto';
-import vitePluginFaviconsInject from 'vite-plugin-favicons-inject';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -37,40 +35,12 @@ export default defineConfig({
   },
   plugins: [
     vue(),
-    visualizer(),
-    viteCompression({
-      deleteOriginFile: false,
-      algorithm: "gzip",
-      ext: '.gz',
-    }),
-    vitePluginFaviconsInject('src/assets/favicon.png', {
-      appName: 'StackEdit中文版', // 应用名称
-      appDescription: '笔记利器，在线Markdown编辑器。', // 应用描述
-    }),
-    VitePWA({
-      manifest: {
-        name: 'StackEdit中文版', // 应用名称
-        description: '笔记利器，在线Markdown编辑器。', // 应用描述
-        display: 'standalone', // 显示模式
-        orientation: 'any', // 屏幕方向
-        start_url: '/app', // 应用启动 URL
-        background_color: '#ffffff', // 背景颜色
-        crossorigin: 'use-credentials', // 跨域策略
-        icons: [
-          {
-            src: '/icons/favicon.png', // 图标路径
-            sizes: '512x512', // 图标尺寸
-            type: 'image/png', // 图标类型
-            purpose: 'any maskable' // 图标用途
-          }
-        ]
-      },
-      registerType: 'autoUpdate', // 自动更新 Service Worker
-      workbox: {
-        navigateFallback: null,
-        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024 // 设置为 3 MiB
-      },
-    }),
+    // visualizer(),
+    // viteCompression({
+    //   deleteOriginFile: false,
+    //   algorithm: "gzip",
+    //   ext: '.gz',
+    // }),
   ],
   resolve: {
     alias: {
@@ -83,20 +53,8 @@ export default defineConfig({
     assetsDir: 'static',
     chunkSizeWarningLimit: 1000,
     assetsInlineLimit: 4 * 1024,
-    minify: 'terser',
+    minify: 'esbuild',
     cssCodeSplit: true, // 如果设置为false，整个项目中的所有 CSS 将被提取到一个 CSS 文件中
-    terserOptions: {
-      compress: {
-        // warnings: false,
-        drop_console: true, // 打包时删除console
-        drop_debugger: true, // 打包时删除 debugger
-        pure_funcs: ['console.log']
-      },
-      output: {
-        // 去掉注释内容
-        comments: true
-      }
-    },
     rollupOptions: {
       output: {
         // 配置 CSS 文件的输出路径，不使用哈希值
@@ -138,6 +96,7 @@ export default defineConfig({
     preprocessorOptions: {
       scss: {
         javascriptEnabled: true,
+        quietDeps: true,
       },
     },
   },
