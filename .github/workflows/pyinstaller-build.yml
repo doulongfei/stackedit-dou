@@ -43,9 +43,7 @@ jobs:
           name: dist-archive
           path: dist.tar.gz
 
-  build_pyinstaller:
-    name: Build pyinstaller (multi-arch)
-    runs-on: ubuntu-latest
+            # (arm64 download belongs in attach_release_assets) - removed stray lines
     needs: build_frontend
     strategy:
       fail-fast: false
@@ -75,12 +73,7 @@ jobs:
 
       - name: Make scripts executable
         run: chmod +x scripts/pyinstaller_build.sh scripts/install_binary.sh || true
-
-      - name: Setup Python for host build
-        if: matrix.arch == 'linux-x86_64'
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
+            # stray upload block removed
 
       - name: Build (native x86_64)
         if: matrix.arch == 'linux-x86_64'
