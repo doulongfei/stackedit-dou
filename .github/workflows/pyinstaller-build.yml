@@ -164,6 +164,8 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: stackedit-server-*.linux-arm64.tar.gz
+          asset_name: stackedit-server-${{ github.ref_name }}-linux-arm64.tar.gz
+          asset_content_type: application/gzip
           
   smoke_test:
     name: Smoke test x86 binary (tag only)
@@ -203,5 +205,3 @@ jobs:
         if: success() || failure()
         run: |
           pkill -f stackedit-server || true
-          asset_name: stackedit-server-${{ github.ref_name }}-linux-arm64.tar.gz
-          asset_content_type: application/gzip
