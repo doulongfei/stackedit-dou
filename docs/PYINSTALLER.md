@@ -49,3 +49,13 @@ sudo journalctl -u stackedit -f
 - 单文件可执行启动时会把打包内的资源 (dist, server) 解压到临时目录（sys._MEIPASS），请不要直接依赖外部文件路径，或在运行时提供覆盖的 `.env` 文件位于可执行同目录。
 
 如果你希望 CI 自动构建该二进制并把产物上传到 Release，我可以继续帮你把这个流程加入 GitHub Actions。此流程对于生成可执行文件会要求在 CI runner 使用合适的构建环境（例如 ubuntu-latest）。
+
+## GitHub Actions support (CI)
+
+This repository now contains a GitHub Actions workflow `.github/workflows/pyinstaller-build.yml` which can
+be used to build the PyInstaller single-file binary on CI and upload the artifact.
+
+- Manual build: go to Actions → "PyInstaller Build & Release" → Run workflow, choose optional `binary_name` and run. It will produce an artifact named `pyinstaller-bundle` and upload it to the workflow run.
+- Tagged releases: when you push a tag matching `v*` (for example `v6.0.1`) the workflow will run on that tag and will automatically create/attach the built tarball to the GitHub Release for that tag.
+
+Note: the CI build produces the same kind of tarball as the local `./scripts/pyinstaller_build.sh` script. As before, external system binaries (pandoc/wkhtmltopdf) are NOT included — install them on your host or include them in a custom Docker image if you need them。
