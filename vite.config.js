@@ -20,7 +20,7 @@ export default defineConfig({
         changeOrigin: true
       },
       '/pdfExport': {
-        target: 'http://localhost:8080', 
+        target: 'http://localhost:8080',
         changeOrigin: true
       },
       '/pandocExport': {
@@ -30,6 +30,12 @@ export default defineConfig({
       '/themes': {
         target: 'http://localhost:8080',
         changeOrigin: true
+      },
+      // ChatGPT Proxy
+      '/chatgpt-api': {
+        target: 'http://lfdou.dpdns.org:8066',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/chatgpt-api/, '')
       },
     }
   },

@@ -14,6 +14,7 @@ import editorSvcDiscussions from './editor/editorSvcDiscussions';
 import editorSvcUtils from './editor/editorSvcUtils';
 import utils from './utils';
 import store from '../store';
+import chatGptSvc from './chatGptSvc';
 import syncSvc from './syncSvc';
 import constants from '../data/constants';
 import localDbSvc from './localDbSvc';
@@ -94,6 +95,7 @@ const editorSvc = Object.assign(mitt() , editorSvcDiscussions, editorSvcUtils, {
   selectionRange: null,
   previewSelectionRange: null,
   previewSelectionStartOffset: null,
+  suggestionState: null,
 
   /**
    * Initialize the Prism grammar with the options
@@ -418,6 +420,92 @@ const editorSvc = Object.assign(mitt() , editorSvcDiscussions, editorSvcUtils, {
     this.tocElt = tocElt;
 
     this.createClEditor(editorElt);
+
+    // ChatGPT Autocomplete Trigger (Alt + P)
+    this.clEditor.addKeystroke(new cledit.Keystroke((evt, state, editor) => {
+      // Alt + P (keyCode 80)
+      if (evt.which !== 80 || !evt.altKey || evt.ctrlKey || evt.metaKey) {
+        return false;
+      }
+      const config = store.getters['chatgpt/chatGptConfig'];
+      if (!config) {
+        return false;
+      }
+
+      evt.preventDefault();
+
+      // Insert placeholder and select it
+      const placeholder = '...';
+      editor.replace(editor.selectionMgr.selectionStart, editor.selectionMgr.selectionEnd, placeholder);
+      const startPos = editor.selectionMgr.selectionEnd - placeholder.length;
+      editor.selectionMgr.setSelectionStartEnd(startPos, editor.selectionMgr.selectionEnd);
+
+      // Store suggestion state
+      this.suggestionState = {
+        active: true,
+        start: startPos,
+        end: editor.selectionMgr.selectionEnd,
+        isLoading: true
+      };
+
+      const contextLength = config.contextLength || 2000;
+      const context = state.before.slice(-contextLength);
+      const prompt = `Please complete the following markdown/code. Output ONLY the completion content. Do not repeat the input. Do not explain.\n\n${context}`;
+
+      let currentContent = '';
+
+      chatGptSvc.chat({
+        apiKey: config.apiKey,
+        url: config.url,
+        model: config.model,
+        content: prompt,
+      }, (res) => {
+        if (res.error) {
+          this.suggestionState = null;
+        } else if (res.content) {
+          // Streaming content
+          // If state is still active and selection matches
+          if (this.suggestionState && this.suggestionState.active) {
+            currentContent += res.content;
+            // Replace the current selection (which starts as "..." then grows)
+            editor.replace(this.suggestionState.start, editor.selectionMgr.selectionEnd, currentContent);
+            // Re-select the inserted content to maintain "suggestion" look
+            const newEnd = this.suggestionState.start + currentContent.length;
+            editor.selectionMgr.setSelectionStartEnd(this.suggestionState.start, newEnd);
+
+            // Update state end
+            this.suggestionState.end = newEnd;
+            this.suggestionState.isLoading = false;
+          }
+        }
+      });
+
+      return true;
+    }, 50));
+
+    // ChatGPT Autocomplete Accept (Tab)
+    this.clEditor.addKeystroke(new cledit.Keystroke((evt, state, editor) => {
+      if (evt.which !== 9 || evt.metaKey || evt.ctrlKey || evt.altKey) {
+        return false;
+      }
+
+      // Check if we have an active suggestion and it is currently selected
+      if (this.suggestionState && this.suggestionState.active) {
+        const selStart = editor.selectionMgr.selectionStart;
+        const selEnd = editor.selectionMgr.selectionEnd;
+
+        // Tolerance for selection match
+        if (selStart === this.suggestionState.start && selEnd === this.suggestionState.end) {
+          evt.preventDefault();
+          // Accept suggestion: Collapse selection to end
+          editor.selectionMgr.setSelectionStartEnd(selEnd, selEnd);
+          this.suggestionState = null;
+          return true;
+        }
+      }
+
+      return false; // Fallback to default Tab behavior
+    }, 40)); // Priority 40 (Run before default 100)
 
     this.clEditor.on('contentChanged', (content, diffs, sectionList) => {
       this.parsingCtx = {

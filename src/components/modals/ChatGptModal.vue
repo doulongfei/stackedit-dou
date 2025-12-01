@@ -6,13 +6,13 @@
       </div>
       <p><b>ChatGPT内容生成</b><br>使用Kimi大模型生成</p>
       <form-entry label="生成内容要求详细描述" error="content">
-        <template v-slot:field><textarea class="text-input" type="text" placeholder="输入内容(支持换行)" v-model.trim="content" :disabled="generating || !apiKey"></textarea></template>
+        <template v-slot:field><textarea class="text-input" type="text" placeholder="输入内容(支持换行)" v-model.trim="content" :disabled="generating"></textarea></template>
         <div class="form-entry__info">
-          <span v-if="!apiKey" class="config-warning">
-            未配置apiKey，请点击 <a href="javascript:void(0)" @click="openConfig">配置</a> apiKey。
+          <span v-if="!apiKey">
+            未配置apiKey (如接口需要鉴权请 <a href="javascript:void(0)" @click="openConfig">配置</a>)
           </span>
           <span v-else>
-            <a href="javascript:void(0)" @click="openConfig">修改apiKey配置</a>
+            <a href="javascript:void(0)" @click="openConfig">修改配置</a>
           </span>
         </div>
       </form-entry>
