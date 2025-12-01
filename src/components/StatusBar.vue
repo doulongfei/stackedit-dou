@@ -1,6 +1,9 @@
 <template>
   <div class="stat-panel panel no-overflow">
     <div class="stat-panel__block stat-panel__block--left" v-if="styles.showEditor">
+      <span class="stat-panel__value" v-if="isLoading" style="color: #4dc9ff; margin-right: 15px; display: inline-flex; align-items: center;">
+        <icon-chat-gpt style="width: 14px; height: 14px; margin-right: 4px;" class="icon-spin"></icon-chat-gpt> AI 生成中...
+      </span>
       <span class="stat-panel__block-name">
         Markdown
         <span v-if="textSelection">selection</span>
@@ -26,6 +29,7 @@
 import { mapGetters } from 'vuex';
 import editorSvc from '../services/editorSvc';
 import utils from '../services/utils';
+import IconChatGpt from '../icons/ChatGpt';
 
 class Stat {
   constructor(name, regex) {
@@ -37,6 +41,9 @@ class Stat {
 }
 
 export default {
+  components: {
+    IconChatGpt,
+  },
   data: () => ({
     textSelection: false,
     htmlSelection: false,
@@ -52,9 +59,14 @@ export default {
       new Stat('段落', '\\S.*'),
     ],
   }),
-  computed: mapGetters('layout', [
-    'styles',
-  ]),
+  computed: {
+    ...mapGetters('layout', [
+      'styles',
+    ]),
+    ...mapGetters('chatgpt', [
+      'isLoading',
+    ]),
+  },
   created() {
     editorSvc.on('sectionList', () => this.computeText());
     editorSvc.on('selectionRange', () => this.computeText());

@@ -10,6 +10,7 @@ export default {
       contextLength: 2000,
       promptTemplate: 'Please complete the following markdown/code. Output ONLY the completion content. Do not repeat the input. Do not explain.\n\n{{context}}',
     },
+    isLoading: false,
   },
   mutations: {
     setCurrConfig: (state, value) => {
@@ -18,9 +19,13 @@ export default {
         ...value,
       };
     },
+    setIsLoading: (state, value) => {
+      state.isLoading = value;
+    },
   },
   getters: {
     chatGptConfig: state => state.config,
+    isLoading: state => state.isLoading,
   },
   actions: {
     setCurrConfig({ commit, state }, value) {

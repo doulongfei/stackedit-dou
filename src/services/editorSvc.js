@@ -453,6 +453,7 @@ const editorSvc = Object.assign(mitt() , editorSvcDiscussions, editorSvcUtils, {
         isLoading: true
       };
 
+      store.commit('chatgpt/setIsLoading', true);
       store.dispatch('notification/info', '正在请求 AI 补全...');
 
       const contextLength = config.contextLength || 2000;
@@ -472,6 +473,9 @@ const editorSvc = Object.assign(mitt() , editorSvcDiscussions, editorSvcUtils, {
       }, (res) => {
         if (res.error) {
           this.suggestionState = null;
+          store.commit('chatgpt/setIsLoading', false);
+        } else if (res.done) {
+          store.commit('chatgpt/setIsLoading', false);
         } else if (res.content) {
           // Streaming content
           // If state is still active and selection matches
@@ -510,6 +514,7 @@ const editorSvc = Object.assign(mitt() , editorSvcDiscussions, editorSvcUtils, {
           // Accept suggestion: Collapse selection to end
           editor.selectionMgr.setSelectionStartEnd(selEnd, selEnd);
           this.suggestionState = null;
+          store.commit('chatgpt/setIsLoading', false);
           return true;
         }
       }
@@ -541,6 +546,7 @@ const editorSvc = Object.assign(mitt() , editorSvcDiscussions, editorSvcUtils, {
              // We replace from start to current selection end (which should be the suggestion end)
              editor.replace(this.suggestionState.start, editor.selectionMgr.selectionEnd, '');
              this.suggestionState = null;
+             store.commit('chatgpt/setIsLoading', false);
              return true;
         }
       }
