@@ -50,6 +50,10 @@
       "destination": "/api/index.py"
     },
     {
+      "source": "/oauth2/callback",
+      "destination": "/oauth2/callback.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
