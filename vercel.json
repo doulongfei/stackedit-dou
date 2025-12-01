@@ -1,0 +1,57 @@
+{
+  "builds": [
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/conf",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/oauth2/githubToken",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/oauth2/giteeToken",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/oauth2/giteaToken",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/oauth2/gitlabToken",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/giteeClientId",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/googleDriveAction",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/pdfExport",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/pandocExport",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

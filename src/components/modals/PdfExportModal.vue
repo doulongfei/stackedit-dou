@@ -46,17 +46,18 @@ export default modalTemplate({
         );
 
         try {
-          const { body } = await networkSvc.request({
-            method: 'POST',
-            url: 'pdfExport',
-            params: {
-              options: JSON.stringify(store.getters['data/computedSettings'].wkhtmltopdf),
-            },
-            body: html,
-            blob: true,
-            timeout: 60000,
-          });
-          FileSaver.saveAs(body, `${currentFile.name}.pdf`);
+          // Vercel deployment change: Use browser print instead of backend wkhtmltopdf
+          const printWindow = window.open('', '_blank');
+          printWindow.document.write(html);
+          printWindow.document.close();
+          printWindow.focus();
+
+          // Wait for resources to load then print
+          setTimeout(() => {
+            printWindow.print();
+            printWindow.close();
+          }, 500);
+
           badgeSvc.addBadge('exportPdf');
         } catch (err) {
           console.error(err); // eslint-disable-line no-console

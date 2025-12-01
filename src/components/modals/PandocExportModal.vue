@@ -42,30 +42,7 @@ export default modalTemplate({
   methods: {
     async resolve() {
       this.config.resolve();
-      const currentFile = store.getters['file/current'];
-      const currentContent = store.getters['content/current'];
-      const { selectedFormat } = this;
-      store.dispatch('queue/enqueue', async () => {
-        try {
-          const { body } = await networkSvc.request({
-            method: 'POST',
-            url: 'pandocExport',
-            params: {
-              format: selectedFormat,
-              options: JSON.stringify(store.getters['data/computedSettings'].pandoc),
-              metadata: JSON.stringify(currentContent.properties),
-            },
-            body: JSON.stringify(editorSvc.getPandocAst()),
-            blob: true,
-            timeout: 60000,
-          });
-          FileSaver.saveAs(body, `${currentFile.name}.${selectedFormat}`);
-          badgeSvc.addBadge('exportPandoc');
-        } catch (err) {
-          console.error(err); // eslint-disable-line no-console
-          store.dispatch('notification/error', err);
-        }
-      });
+      store.dispatch('notification/info', 'Pandoc export is not supported in this static deployment. Please use the PDF export or other formats.');
     },
   },
 });
