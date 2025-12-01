@@ -169,7 +169,7 @@ export default {
       if (err.status === 404) {
         await request(token, {
           method: 'POST',
-          url: 'https://api.github.com/repos/mafgwo/stackedit-appdata-template/generate',
+          url: 'https://api.github.com/repos/doulongfei/stackedit-appdata-template/generate',
           body: {
             owner: token.name,
             name: appDataRepo,

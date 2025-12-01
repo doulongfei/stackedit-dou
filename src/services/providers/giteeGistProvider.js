@@ -11,7 +11,7 @@ export default new Provider({
     return store.getters['data/giteeTokensBySub'][sub];
   },
   getLocationUrl({ gistId }) {
-    return `https://gitee.com/mafgwo/codes/${gistId}`;
+    return `https://gitee.com/doulongfei/codes/${gistId}`;
   },
   getLocationDescription({ filename }) {
     return filename;

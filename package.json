@@ -1,13 +1,13 @@
 {
   "name": "stackedit",
   "private": true,
-  "version": "6.0.0",
+  "version": "6.6.6",
   "description": "免费, 开源, 功能齐全的 Markdown 编辑器",
-  "author": "Benoit Schweblin, 豆萁",
+  "author": "Benoit Schweblin, 豆萁, doulongfei",
   "license": "Apache-2.0",
   "type": "module",
   "bugs": {
-    "url": "https://github.com/mafgwo/stackedit/issues"
+    "url": "https://github.com/doulongfei/stackedit-dou/issues"
   },
   "scripts": {
     "dev": "vite",
