@@ -450,7 +450,7 @@ const editorSvc = Object.assign(mitt() , editorSvcDiscussions, editorSvcUtils, {
 
       const contextLength = config.contextLength || 2000;
       const context = state.before.slice(-contextLength);
-      const prompt = `Please complete the following markdown/code. Output ONLY the completion content. Do not repeat the input. Do not explain.\n\n${context}`;
+      const prompt = `Please complete the following markdown/code.  Output ONLY the completion content. Do not repeat the input. Do not explain.\n\n${context}`;
 
       let currentContent = '';
 
@@ -506,6 +506,36 @@ const editorSvc = Object.assign(mitt() , editorSvcDiscussions, editorSvcUtils, {
 
       return false; // Fallback to default Tab behavior
     }, 40)); // Priority 40 (Run before default 100)
+
+    // ChatGPT Autocomplete Cancel (Esc)
+    this.clEditor.addKeystroke(new cledit.Keystroke((evt, state, editor) => {
+      if (evt.which !== 27 /* Esc */ || evt.metaKey || evt.ctrlKey || evt.altKey) {
+        return false;
+      }
+
+      // Check if we have an active suggestion
+      if (this.suggestionState && this.suggestionState.active) {
+        evt.preventDefault();
+        // Cancel suggestion: Remove the inserted content
+        editor.replace(this.suggestionState.start, editor.selectionMgr.selectionEnd, ''); // Use current selection end to be safe, or state.end
+        // state.end might be outdated if user typed? But if user typed, selection changed, matching logic in Tab/Esc might fail if I was strict.
+        // But here, if I am strict about selection matching like Tab, I should verify.
+        // However, user said "After content appears".
+        // Let's stick to the same strictness: if selection matches suggestion.
+
+        const selStart = editor.selectionMgr.selectionStart;
+        // const selEnd = editor.selectionMgr.selectionEnd; // Not needed if we trust start
+
+        if (selStart === this.suggestionState.start) {
+             // If selection starts at suggestion start, we assume it's the suggestion.
+             // We replace from start to current selection end (which should be the suggestion end)
+             editor.replace(this.suggestionState.start, editor.selectionMgr.selectionEnd, '');
+             this.suggestionState = null;
+             return true;
+        }
+      }
+      return false;
+    }, 40));
 
     this.clEditor.on('contentChanged', (content, diffs, sectionList) => {
       this.parsingCtx = {
