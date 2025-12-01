@@ -61,7 +61,8 @@ self.addEventListener('fetch', (event) => {
   if (url.pathname.startsWith('/oauth2') ||
       url.pathname.startsWith('/conf') ||
       url.pathname.startsWith('/pdfExport') ||
-      url.pathname.startsWith('/pandocExport')) {
+      url.pathname.startsWith('/pandocExport') ||
+      url.pathname.startsWith('/chatgpt-api')) {
     return;
   }
 
