@@ -427,6 +427,11 @@ const editorSvc = Object.assign(mitt() , editorSvcDiscussions, editorSvcUtils, {
       if (evt.which !== 80 || !evt.altKey || evt.ctrlKey || evt.metaKey) {
         return false;
       }
+      // Prevent repeated requests if already loading
+      if (this.suggestionState && this.suggestionState.isLoading) {
+        return true;
+      }
+
       const config = store.getters['chatgpt/chatGptConfig'];
       if (!config) {
         return false;
@@ -448,9 +453,14 @@ const editorSvc = Object.assign(mitt() , editorSvcDiscussions, editorSvcUtils, {
         isLoading: true
       };
 
+      store.dispatch('notification/info', '正在请求 AI 补全...');
+
       const contextLength = config.contextLength || 2000;
       const context = state.before.slice(-contextLength);
-      const prompt = `Please complete the following markdown/code.  Output ONLY the completion content. Do not repeat the input. Do not explain.\n\n${context}`;
+
+      const defaultTemplate = 'Please complete the following markdown/code. Output ONLY the completion content. Do not repeat the input. Do not explain.\n\n{{context}}';
+      const template = config.promptTemplate || defaultTemplate;
+      const prompt = template.replace('{{context}}', context);
 
       let currentContent = '';
 

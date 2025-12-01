@@ -8,6 +8,7 @@ export default {
       url: '/chatgpt-api/v1/chat/completions',
       model: 'gpt-5-mini',
       contextLength: 2000,
+      promptTemplate: 'Please complete the following markdown/code. Output ONLY the completion content. Do not repeat the input. Do not explain.\n\n{{context}}',
     },
   },
   mutations: {

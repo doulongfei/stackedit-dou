@@ -17,6 +17,9 @@
       <form-entry label="上下文长度 (Context Length)" error="contextLength">
         <input slot="field" class="textfield" type="number" v-model.number="contextLength" placeholder="默认: 2000" @keydown.enter="resolve()">
       </form-entry>
+      <form-entry label="补全提示词 (Prompt Template)" error="promptTemplate">
+        <textarea slot="field" class="textfield" v-model.trim="promptTemplate" placeholder="使用 {{context}} 代表上下文" style="height: 100px; resize: vertical;"></textarea>
+      </form-entry>
       <div class="form-entry__info" style="margin-top: 10px; font-size: 0.9em; color: #666;">
         此处配置仅保存在前端浏览器缓存中。API 地址已默认配置代理以解决跨域问题。
       </div>
@@ -39,6 +42,7 @@ export default modalTemplate({
       url: '',
       model: '',
       contextLength: 2000,
+      promptTemplate: '',
     };
   },
   created() {
@@ -47,6 +51,7 @@ export default modalTemplate({
     this.url = config.url || '/chatgpt-api/v1/chat/completions';
     this.model = config.model || 'gpt-5-mini';
     this.contextLength = config.contextLength || 2000;
+    this.promptTemplate = config.promptTemplate || 'Please complete the following markdown/code. Output ONLY the completion content. Do not repeat the input. Do not explain.\n\n{{context}}';
   },
   methods: {
     resolve() {
@@ -64,6 +69,7 @@ export default modalTemplate({
         url: this.url,
         model: this.model,
         contextLength: this.contextLength,
+        promptTemplate: this.promptTemplate,
       });
     },
   },
