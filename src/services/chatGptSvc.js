@@ -6,7 +6,9 @@ export default {
     // Use provided URL or fallback (though UI ensures URL is present)
     const finalUrl = url || 'http://lfdou.dpdns.org:8066/v1/chat/completions';
     xhr.open('POST', finalUrl);
-    xhr.setRequestHeader('Authorization', `Bearer ${apiKey}`);
+    if (apiKey) {
+      xhr.setRequestHeader('Authorization', `Bearer ${apiKey}`);
+    }
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send(JSON.stringify({
       model: model || 'gpt-5-mini',
