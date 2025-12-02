@@ -25,6 +25,8 @@ import explorerSvc from '../services/explorerSvc';
 import store from '../store';
 import badgeSvc from '../services/badgeSvc';
 import utils from '../services/utils';
+import localDbSvc from '../services/localDbSvc';
+import chatGptSvc from '../services/chatGptSvc';
 
 export default {
   name: 'explorer-node', // Required for recursivity
@@ -201,6 +203,52 @@ export default {
             name: '重命名',
             disabled: this.node.isTrash || this.node.isTemp,
             perform: () => this.setEditingId(this.node.item.id),
+          }, {
+            name: '重命名 - AI',
+            disabled: this.node.isTrash || this.node.isTemp || this.node.isFolder,
+            perform: async () => {
+              const fileId = this.node.item.id;
+              let contentItem = store.state.content.itemsById[`${fileId}/content`];
+              if (!contentItem) {
+                try {
+                  contentItem = await localDbSvc.loadItem(`${fileId}/content`);
+                } catch (e) {
+                  store.dispatch('notification/error', '无法读取文件内容');
+                  return;
+                }
+              }
+              const text = contentItem.text;
+              if (!text) {
+                store.dispatch('notification/error', '文件内容为空');
+                return;
+              }
+
+              store.dispatch('notification/info', 'AI 正在生成文件名...');
+              const { apiKey, model, url } = store.state.chatgpt.config;
+              let generatedName = '';
+              chatGptSvc.chat({
+                apiKey,
+                model,
+                url,
+                content: `请根据以下内容生成一个简短的文件名（不要包含扩展名）：\n\n${text.substring(0, 3000)}`,
+              }, (result) => {
+                if (result.content) {
+                  generatedName += result.content;
+                }
+                if (result.done) {
+                  const cleanName = generatedName.replace(/["\n\r]/g, '').trim();
+                  if (cleanName) {
+                    workspaceSvc.storeItem({
+                      ...this.node.item,
+                      name: cleanName,
+                    }).then(() => {
+                      badgeSvc.addBadge('renameFile');
+                      store.dispatch('notification/info', `已重命名为: ${cleanName}`);
+                    });
+                  }
+                }
+              });
+            },
           }, {
             name: '删除',
             perform: () => explorerSvc.deleteItem(),
