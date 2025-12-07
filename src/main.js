@@ -47,7 +47,7 @@ if ('serviceWorker' in navigator) {
             console.error('同步失败:', e);
           }
         }
-        store.dispatch('notification/info', 'StackEdit中文版刚刚更新了！');
+        store.dispatch('notification/info', 'StackEdit AI中文版刚刚更新了！');
       }
     });
   });
@@ -58,7 +58,7 @@ if (!localStorage.installPrompted) {
   window.addEventListener('beforeinstallprompt', async (promptEvent) => {
     promptEvent.preventDefault();
     try {
-      await store.dispatch('notification/confirm', '将StackEdit中文版添加到您的主屏幕上？');
+      await store.dispatch('notification/confirm', '将StackEdit AI中文版添加到您的主屏幕上？');
       promptEvent.prompt();
       await promptEvent.userChoice;
     } catch (err) {

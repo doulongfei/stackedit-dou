@@ -17,7 +17,16 @@ export default {
       stream: true,
     }));
     let lastRespLen = 0;
+    let errorEmitted = false;
     xhr.onprogress = () => {
+      if (xhr.status !== 200) {
+        if (!errorEmitted) {
+          store.dispatch('notification/error', 'ChatGPT请求失败，请检查API Key配置！');
+          callback({ error: 'ChatGPT请求失败' });
+          errorEmitted = true;
+        }
+        return;
+      }
       const responseText = xhr.response.substr(lastRespLen);
       lastRespLen = xhr.response.length;
       responseText.split('\n\n')

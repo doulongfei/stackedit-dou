@@ -1,6 +1,6 @@
 {
-  "name": "StackEdit中文版",
-  "short_name": "StackEdit",
+  "name": "StackEdit AI中文版",
+  "short_name": "StackEdit AI",
   "description": "笔记利器，在线Markdown编辑器",
   "start_url": "/app",
   "display": "standalone",

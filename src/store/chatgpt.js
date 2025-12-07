@@ -4,7 +4,7 @@ export default {
   namespaced: true,
   state: {
     config: {
-      apiKey: null,
+      apiKey: 'lfdou',
       url: '/chatgpt-api/v1/chat/completions',
       model: 'gpt-5-mini',
       contextLength: 2000,
