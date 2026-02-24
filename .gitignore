@@ -21,3 +21,17 @@ chrome-app/*.zip
 *.sw?
 */__pycache__/
 server/.venv/
+build/stackedit/Analysis-00.toc
+build/stackedit/base_library.zip
+build/stackedit/EXE-00.toc
+build/stackedit/PKG-00.toc
+build/stackedit/PYZ-00.pyz
+build/stackedit/PYZ-00.toc
+build/stackedit/stackedit.pkg
+build/stackedit/warn-stackedit.txt
+build/stackedit/xref-stackedit.html
+build/stackedit/localpycs/pyimod01_archive.pyc
+build/stackedit/localpycs/pyimod02_importers.pyc
+build/stackedit/localpycs/pyimod03_ctypes.pyc
+build/stackedit/localpycs/struct.pyc
+stackedit.spec
