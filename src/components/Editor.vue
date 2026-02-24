@@ -59,7 +59,8 @@ export default {
           store.dispatch('notification/error', error);
           return;
         }
-        editorSvc.clEditor.replaceAll(`[图片上传中...(image-${imgId})]`, `![输入图片说明](${url})`);
+        const imgName = url.split('/').pop().split('?')[0] || '输入图片说明';
+        editorSvc.clEditor.replaceAll(`[图片上传中...(image-${imgId})]`, `![${imgName}](${url})`);
       } catch (err) {
         console.error(err); // eslint-disable-line no-console
         editorSvc.clEditor.replaceAll(`[图片上传中...(image-${imgId})]`, `[图片上传失败...(image-${imgId})]`);
